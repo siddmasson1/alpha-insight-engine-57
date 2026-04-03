@@ -147,5 +147,6 @@ const AnalysisPanel = ({ selectedNews, analysis, isLoading }: AnalysisPanelProps
       </motion.div>
     </AnimatePresence>
   );
+};
 
 export default AnalysisPanel;
