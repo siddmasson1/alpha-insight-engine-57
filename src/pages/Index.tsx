@@ -7,9 +7,10 @@ import NewsFeed from "@/components/NewsFeed";
 import AnalysisPanel from "@/components/AnalysisPanel";
 import ScenarioDialog from "@/components/ScenarioDialog";
 import AddHoldingDialog from "@/components/AddHoldingDialog";
+import UploadPositionsDialog from "@/components/UploadPositionsDialog";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 
 const Index = () => {
   const [holdings, setHoldings] = useState<Holding[]>(initialHoldings);
