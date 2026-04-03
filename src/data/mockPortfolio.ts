@@ -9,6 +9,7 @@ export interface Holding {
   shares: number;
   weight: number;
   pnl: number;
+  dateAdded: Date;
 }
 
 export interface NewsItem {
