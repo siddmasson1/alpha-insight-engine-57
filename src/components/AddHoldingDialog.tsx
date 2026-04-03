@@ -44,6 +44,9 @@ const AddHoldingDialog = ({ open, onOpenChange, onSubmit }: AddHoldingDialogProp
       weight: 0, // will be recalculated
       pnl: 0,
       dateAdded,
+      thesis: "",
+      catalysts: "",
+      breakConditions: "",
     });
 
     setTicker("");
