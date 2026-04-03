@@ -97,6 +97,11 @@ const NewsFeed = ({ news, selectedNewsId, onSelectNews, onAddScenario, onDeleteN
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] text-muted-foreground font-medium">{item.source}</span>
+                    {item.source === "Custom Scenario" && (
+                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 bg-accent/20 text-accent-foreground border-accent/30">
+                        Scenario
+                      </Badge>
+                    )}
                     <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
                       <Clock className="w-2.5 h-2.5" />
                       {formatTime(item.timestamp)}
