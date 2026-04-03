@@ -92,6 +92,9 @@ function buildHoldings(rows: ParsedRow[]): Holding[] {
       weight: 0,
       pnl,
       dateAdded: new Date(latest.date),
+      thesis: "",
+      catalysts: "",
+      breakConditions: "",
     });
   }
 
