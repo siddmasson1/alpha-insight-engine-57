@@ -21,6 +21,7 @@ const Index = () => {
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const [addHoldingOpen, setAddHoldingOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [isRefreshingNews, setIsRefreshingNews] = useState(false);
 
   const selectedNews = news.find((n) => n.id === selectedNewsId) || null;
 
