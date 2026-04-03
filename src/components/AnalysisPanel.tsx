@@ -57,6 +57,9 @@ const AnalysisPanel = ({ selectedNews, analysis, isLoading }: AnalysisPanelProps
     return "bg-primary/20 text-primary border-primary/30";
   };
 
+  // Show only top 3 impacted positions in summary
+  const topPositions = analysis.portfolioImpact?.slice(0, 3) || [];
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -65,91 +68,82 @@ const AnalysisPanel = ({ selectedNews, analysis, isLoading }: AnalysisPanelProps
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -8 }}
         transition={{ duration: 0.3 }}
-        className="h-full"
+        className="h-full flex flex-col"
       >
-        <ScrollArea className="h-full pr-2">
-          <div className="space-y-4 pb-4">
-            {/* Header */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-warning" />
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Impact Analysis</h3>
-                </div>
-                <Button variant="ghost" size="sm" onClick={handleDrillDown} className="text-xs gap-1.5 text-primary hover:text-primary">
-                  <Maximize2 className="w-3.5 h-3.5" /> Expand
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">{analysis.summary}</p>
-              <div className="flex items-center gap-3 mt-3">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-muted-foreground">Impact:</span>
-                  <span className={cn("font-mono font-bold text-sm",
-                    analysis.impactScore >= 8 ? "text-loss" : analysis.impactScore >= 6 ? "text-warning" : "text-primary"
-                  )}>{analysis.impactScore}/10</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-muted-foreground">Portfolio:</span>
-                  <span className={cn("font-mono font-bold text-sm",
-                    analysis.overallPortfolioImpactPct >= 0 ? "text-gain" : "text-loss"
-                  )}>
-                    {analysis.overallPortfolioImpactPct >= 0 ? "+" : ""}{analysis.overallPortfolioImpactPct?.toFixed(2)}%
-                  </span>
-                </div>
+        <div className="space-y-4 pb-4 flex-1">
+          {/* Header */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-warning" />
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Impact Analysis</h3>
               </div>
             </div>
-
-            {/* Position Impact */}
-            <div className="glass-card rounded-lg p-3">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Position Impact</h4>
-              <div className="space-y-1.5">
-                {analysis.portfolioImpact?.map((p) => (
-                  <div key={p.ticker} className="flex items-center justify-between py-1.5 border-b border-border/20 last:border-0">
-                    <div className="flex items-center gap-2">
-                      {directionIcon(p.direction)}
-                      <span className="font-mono text-sm font-semibold text-primary">{p.ticker}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground max-w-[180px] truncate">{p.reasoning}</span>
-                      <span className={cn("font-mono text-sm font-bold min-w-[55px] text-right",
-                        p.direction === "up" ? "text-gain" : p.direction === "down" ? "text-loss" : "text-muted-foreground"
-                      )}>
-                        {p.direction === "up" ? "+" : p.direction === "down" ? "-" : ""}{Math.abs(p.estimatedPctMove).toFixed(1)}%
-                      </span>
-                    </div>
-                  </div>
-                ))}
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{analysis.summary}</p>
+            <div className="flex items-center gap-3 mt-3">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-muted-foreground">Impact:</span>
+                <span className={cn("font-mono font-bold text-sm",
+                  analysis.impactScore >= 8 ? "text-loss" : analysis.impactScore >= 6 ? "text-warning" : "text-primary"
+                )}>{analysis.impactScore}/10</span>
               </div>
-            </div>
-
-            {/* Risk Analysis */}
-            <div className="glass-card rounded-lg p-3">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Risk Concentration</h4>
-              <p className="text-sm text-foreground/80 leading-relaxed">{analysis.riskAnalysis}</p>
-            </div>
-
-            {/* Hedge Recommendations */}
-            <div className="glass-card rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Shield className="w-4 h-4 text-primary" />
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Hedge Recommendations</h4>
-              </div>
-              <div className="space-y-2">
-                {analysis.hedgeRecommendations?.map((rec, i) => (
-                  <div key={i} className="p-2.5 rounded-md bg-secondary/50 border border-border/30">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <p className="text-sm font-medium text-foreground">{rec.action}</p>
-                      <Badge variant="outline" className={cn("text-[10px] shrink-0", urgencyColor(rec.urgency))}>
-                        {rec.urgency}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{rec.rationale}</p>
-                  </div>
-                ))}
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-muted-foreground">Portfolio:</span>
+                <span className={cn("font-mono font-bold text-sm",
+                  analysis.overallPortfolioImpactPct >= 0 ? "text-gain" : "text-loss"
+                )}>
+                  {analysis.overallPortfolioImpactPct >= 0 ? "+" : ""}{analysis.overallPortfolioImpactPct?.toFixed(2)}%
+                </span>
               </div>
             </div>
           </div>
-        </ScrollArea>
+
+          {/* Top Movers (condensed) */}
+          <div className="glass-card rounded-lg p-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Top Movers</h4>
+            <div className="space-y-1.5">
+              {topPositions.map((p) => (
+                <div key={p.ticker} className="flex items-center justify-between py-1 border-b border-border/20 last:border-0">
+                  <div className="flex items-center gap-2">
+                    {directionIcon(p.direction)}
+                    <span className="font-mono text-sm font-semibold text-primary">{p.ticker}</span>
+                  </div>
+                  <span className={cn("font-mono text-sm font-bold",
+                    p.direction === "up" ? "text-gain" : p.direction === "down" ? "text-loss" : "text-muted-foreground"
+                  )}>
+                    {p.direction === "up" ? "+" : p.direction === "down" ? "-" : ""}{Math.abs(p.estimatedPctMove).toFixed(1)}%
+                  </span>
+                </div>
+              ))}
+              {(analysis.portfolioImpact?.length || 0) > 3 && (
+                <p className="text-xs text-muted-foreground pt-1">
+                  +{(analysis.portfolioImpact?.length || 0) - 3} more positions
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Top hedge (just first one) */}
+          {analysis.hedgeRecommendations?.[0] && (
+            <div className="glass-card rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-4 h-4 text-primary" />
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Top Hedge</h4>
+              </div>
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-sm font-medium text-foreground line-clamp-2">{analysis.hedgeRecommendations[0].action}</p>
+                <Badge variant="outline" className={cn("text-[10px] shrink-0", urgencyColor(analysis.hedgeRecommendations[0].urgency))}>
+                  {analysis.hedgeRecommendations[0].urgency}
+                </Badge>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Expand button pinned at bottom */}
+        <Button onClick={handleDrillDown} className="w-full gap-2 mt-auto">
+          <Maximize2 className="w-4 h-4" /> View Full Analysis
+        </Button>
       </motion.div>
     </AnimatePresence>
   );
