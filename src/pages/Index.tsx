@@ -50,6 +50,19 @@ const Index = () => {
     setHoldings(newHoldings);
   }, []);
 
+  const handleRefreshNews = useCallback(() => {
+    setIsRefreshingNews(true);
+    setNews((prev) =>
+      prev.map((n, i) => ({ ...n, timestamp: new Date(Date.now() - i * 30 * 60000) }))
+    );
+    setSelectedNewsId(null);
+    setAnalysis(null);
+    setTimeout(() => {
+      setIsRefreshingNews(false);
+      toast({ title: "News Refreshed", description: "Feed updated with latest timestamps." });
+    }, 600);
+  }, []);
+
   const handleRemoveHolding = useCallback((ticker: string) => {
     setHoldings((prev) => {
       const updated = prev.filter((h) => h.ticker !== ticker);
