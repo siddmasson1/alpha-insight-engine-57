@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { holdings as initialHoldings, initialNews, portfolioBeta, NewsItem, ImpactAnalysis, Holding } from "@/data/mockPortfolio";
 import { supabase } from "@/integrations/supabase/client";
+import { useAnalysis } from "@/contexts/AnalysisContext";
 import HeaderStats from "@/components/HeaderStats";
 import PortfolioTable from "@/components/PortfolioTable";
 import NewsFeed from "@/components/NewsFeed";
@@ -15,9 +16,7 @@ import { Plus, Upload } from "lucide-react";
 const Index = () => {
   const [holdings, setHoldings] = useState<Holding[]>(initialHoldings);
   const [news, setNews] = useState<NewsItem[]>(initialNews);
-  const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<ImpactAnalysis | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const { selectedNewsId, analysis, isLoading, setSelectedNewsId, setAnalysis, setIsLoading } = useAnalysis();
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const [addHoldingOpen, setAddHoldingOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);

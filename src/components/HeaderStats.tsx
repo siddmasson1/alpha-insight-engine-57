@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, DollarSign, Activity, User } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
 interface HeaderStatsProps {
   totalAUM: number;
   dailyPnL: number;
@@ -24,8 +25,9 @@ const HeaderStats = ({ totalAUM, dailyPnL, portfolioBeta }: HeaderStatsProps) =>
   };
 
   return (
-    <header className="flex items-center justify-between px-6 py-3 border-b border-border/50 bg-card/50 backdrop-blur-sm">
+    <header className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-card/50 backdrop-blur-sm">
       <div className="flex items-center gap-3">
+        <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
         <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
           <Activity className="w-4 h-4 text-primary" />
         </div>
