@@ -95,6 +95,7 @@ function buildHoldings(rows: ParsedRow[]): Holding[] {
       thesis: "",
       catalysts: "",
       breakConditions: "",
+      risk_factors: { rates_sensitivity: 5, commodity_exposure: 5, usd_sensitivity: 5, credit_sensitivity: 5, equity_beta: 5, growth_value_tilt: 5, market_cap_size: 5, credit_rating: 5, consumer_spending_sensitivity: 5, key_management_risk: 5, brand_reputational_risk: 5 },
     });
   }
 
