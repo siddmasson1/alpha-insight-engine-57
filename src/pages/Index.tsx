@@ -21,6 +21,7 @@ const Index = () => {
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const [addHoldingOpen, setAddHoldingOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [isRefreshingNews, setIsRefreshingNews] = useState(false);
 
   const selectedNews = news.find((n) => n.id === selectedNewsId) || null;
 
@@ -47,6 +48,19 @@ const Index = () => {
 
   const handleUploadPositions = useCallback((newHoldings: Holding[]) => {
     setHoldings(newHoldings);
+  }, []);
+
+  const handleRefreshNews = useCallback(() => {
+    setIsRefreshingNews(true);
+    setNews((prev) =>
+      prev.map((n, i) => ({ ...n, timestamp: new Date(Date.now() - i * 30 * 60000) }))
+    );
+    setSelectedNewsId(null);
+    setAnalysis(null);
+    setTimeout(() => {
+      setIsRefreshingNews(false);
+      toast({ title: "News Refreshed", description: "Feed updated with latest timestamps." });
+    }, 600);
   }, []);
 
   const handleRemoveHolding = useCallback((ticker: string) => {
@@ -174,6 +188,8 @@ const Index = () => {
               onSelectNews={handleSelectNews}
               onAddScenario={() => setScenarioOpen(true)}
               onDeleteNews={handleDeleteNews}
+              onRefresh={handleRefreshNews}
+              isRefreshing={isRefreshingNews}
             />
           </div>
         </div>

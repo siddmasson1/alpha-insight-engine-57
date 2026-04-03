@@ -1,6 +1,6 @@
 import { NewsItem } from "@/data/mockPortfolio";
 import { cn } from "@/lib/utils";
-import { Clock, Zap, Plus, ExternalLink, X } from "lucide-react";
+import { Clock, Zap, Plus, ExternalLink, X, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,8 @@ interface NewsFeedProps {
   onSelectNews: (id: string) => void;
   onAddScenario: () => void;
   onDeleteNews: (id: string) => void;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 const getImpactColor = (score: number) => {
@@ -27,7 +29,7 @@ const formatTime = (date: Date) => {
   return `${Math.floor(mins / 60)}h ago`;
 };
 
-const NewsFeed = ({ news, selectedNewsId, onSelectNews, onAddScenario, onDeleteNews }: NewsFeedProps) => {
+const NewsFeed = ({ news, selectedNewsId, onSelectNews, onAddScenario, onDeleteNews, onRefresh, isRefreshing }: NewsFeedProps) => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-3">
@@ -36,15 +38,29 @@ const NewsFeed = ({ news, selectedNewsId, onSelectNews, onAddScenario, onDeleteN
           <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Live News Feed</h3>
           <span className="w-2 h-2 rounded-full bg-gain animate-pulse-glow" />
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onAddScenario}
-          className="text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
-        >
-          <Plus className="w-3 h-3" />
-          Scenario
-        </Button>
+        <div className="flex gap-1.5">
+          {onRefresh && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
+            >
+              <RefreshCw className={cn("w-3 h-3", isRefreshing && "animate-spin")} />
+              Refresh
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onAddScenario}
+            className="text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
+          >
+            <Plus className="w-3 h-3" />
+            Scenario
+          </Button>
+        </div>
       </div>
 
       <ScrollArea className="flex-1 pr-2">
