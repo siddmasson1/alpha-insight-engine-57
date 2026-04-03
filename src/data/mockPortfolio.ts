@@ -20,6 +20,7 @@ export interface NewsItem {
   affectedTickers: string[];
   impactScore: number;
   summary?: string;
+  url?: string;
 }
 
 export interface ImpactAnalysis {
