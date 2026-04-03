@@ -142,16 +142,12 @@ const UploadPositionsDialog = ({ open, onOpenChange, onUpload }: UploadPositions
         shares: h.shares, weight: h.weight, pnl: h.pnl,
       }));
 
-      const res = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const { data, error } = await supabase.functions.invoke("send-to-webhook", {
+        body: { payload, webhookUrl: WEBHOOK_URL },
       });
 
-      if (!res.ok) {
-        const body = await res.text();
-        throw new Error(body || `HTTP ${res.status}`);
-      }
+      if (error) throw error;
+      if (data && !data.success) throw new Error(data.body || data.error || "Webhook failed");
 
       onUpload(preview);
       toast({ title: "Positions Uploaded", description: `${preview.length} holdings uploaded and sent to webhook.` });
