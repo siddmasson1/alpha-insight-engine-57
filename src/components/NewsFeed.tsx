@@ -11,6 +11,8 @@ interface NewsFeedProps {
   onSelectNews: (id: string) => void;
   onAddScenario: () => void;
   onDeleteNews: (id: string) => void;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 const getImpactColor = (score: number) => {
