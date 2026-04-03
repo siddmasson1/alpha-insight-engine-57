@@ -190,6 +190,7 @@ const Index = () => {
 
       <ScenarioDialog open={scenarioOpen} onOpenChange={setScenarioOpen} onSubmit={handleScenarioSubmit} />
       <AddHoldingDialog open={addHoldingOpen} onOpenChange={setAddHoldingOpen} onSubmit={handleAddHolding} />
+      <UploadPositionsDialog open={uploadOpen} onOpenChange={setUploadOpen} onUpload={handleUploadPositions} />
     </div>
   );
 };
