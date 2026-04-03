@@ -62,7 +62,9 @@ const PortfolioTable = ({ holdings, onRemoveHolding }: PortfolioTableProps) => {
                 {h.pnl >= 0 ? "+" : ""}{formatCurrency(h.pnl)}
               </TableCell>
               <TableCell className="text-center text-xs text-muted-foreground font-mono py-2">
-                {format(h.dateAdded, "MM/dd/yy")}
+                {h.dateAdded instanceof Date && !isNaN(h.dateAdded.getTime())
+                  ? format(h.dateAdded, "MM/dd/yy")
+                  : "—"}
               </TableCell>
               <TableCell className="py-2">
                 {onRemoveHolding && (
