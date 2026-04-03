@@ -2,7 +2,9 @@ import { ImpactAnalysis, NewsItem } from "@/data/mockPortfolio";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Shield, TrendingDown, TrendingUp, Minus, AlertTriangle, Target, Loader2 } from "lucide-react";
+import { Shield, TrendingDown, TrendingUp, Minus, AlertTriangle, Target, Loader2, Maximize2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AnalysisPanelProps {
