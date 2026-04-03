@@ -1,4 +1,4 @@
 project_id = "bphpaqkfoobomjskbqgs"
 
-[functions.analyze-impact]
+[functions."analyze-impact"]
 verify_jwt = false
