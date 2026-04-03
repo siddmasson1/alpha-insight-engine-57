@@ -1,6 +1,15 @@
-import { TrendingUp, TrendingDown, DollarSign, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Activity, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 interface HeaderStatsProps {
   totalAUM: number;
   dailyPnL: number;
