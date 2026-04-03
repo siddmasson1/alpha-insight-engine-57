@@ -10,14 +10,20 @@ import { useMemo } from "react";
 import ThesisImpactSection from "@/components/analysis/ThesisImpactSection";
 import PrecedentEventsSection from "@/components/analysis/PrecedentEventsSection";
 import QuantAnalystChat from "@/components/analysis/QuantAnalystChat";
+import { useAnalysis } from "@/contexts/AnalysisContext";
 
 const AnalysisDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { analysis, selectedNews } = (location.state || {}) as {
+  const ctx = useAnalysis();
+  
+  // Prefer location.state (from navigation), fall back to cached context
+  const locationState = (location.state || {}) as {
     analysis: ImpactAnalysis | null;
     selectedNews: NewsItem | null;
   };
+  const analysis = locationState.analysis || ctx.analysis;
+  const selectedNews = locationState.selectedNews || null;
 
   const radarData = useMemo(() => {
     if (!analysis) return [];

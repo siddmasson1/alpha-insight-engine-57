@@ -1,5 +1,15 @@
 import { TrendingUp, TrendingDown, DollarSign, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface HeaderStatsProps {
   totalAUM: number;
@@ -15,8 +25,9 @@ const HeaderStats = ({ totalAUM, dailyPnL, portfolioBeta }: HeaderStatsProps) =>
   };
 
   return (
-    <header className="flex items-center justify-between px-6 py-3 border-b border-border/50 bg-card/50 backdrop-blur-sm">
+    <header className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-card/50 backdrop-blur-sm">
       <div className="flex items-center gap-3">
+        <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
         <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
           <Activity className="w-4 h-4 text-primary" />
         </div>
@@ -53,6 +64,29 @@ const HeaderStats = ({ totalAUM, dailyPnL, portfolioBeta }: HeaderStatsProps) =>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Portfolio β</p>
           <p className="text-sm font-mono font-bold text-foreground">{portfolioBeta.toFixed(2)}</p>
         </div>
+
+        <div className="w-px h-8 bg-border/50" />
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">JD</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <div className="px-2 py-1.5">
+              <p className="text-sm font-medium">John Doe</p>
+              <p className="text-xs text-muted-foreground">john@example.com</p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-loss">Sign out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
