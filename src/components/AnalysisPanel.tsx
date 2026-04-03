@@ -71,9 +71,14 @@ const AnalysisPanel = ({ selectedNews, analysis, isLoading }: AnalysisPanelProps
           <div className="space-y-4 pb-4">
             {/* Header */}
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="w-4 h-4 text-warning" />
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Impact Analysis</h3>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-warning" />
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Impact Analysis</h3>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleDrillDown} className="text-xs gap-1.5 text-primary hover:text-primary">
+                  <Maximize2 className="w-3.5 h-3.5" /> Expand
+                </Button>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{analysis.summary}</p>
               <div className="flex items-center gap-3 mt-3">
