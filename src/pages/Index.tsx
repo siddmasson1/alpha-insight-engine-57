@@ -188,6 +188,8 @@ const Index = () => {
               onSelectNews={handleSelectNews}
               onAddScenario={() => setScenarioOpen(true)}
               onDeleteNews={handleDeleteNews}
+              onRefresh={handleRefreshNews}
+              isRefreshing={isRefreshingNews}
             />
           </div>
         </div>
