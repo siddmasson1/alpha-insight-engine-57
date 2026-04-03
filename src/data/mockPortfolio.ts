@@ -41,6 +41,24 @@ export interface NewsItem {
   url?: string;
 }
 
+export interface ThesisImpact {
+  ticker: string;
+  originalThesis: string;
+  thesisStatus: "intact" | "weakened" | "strengthened" | "broken";
+  reasoning: string;
+  revisedOutlook: string;
+}
+
+export interface PrecedentEvent {
+  date: string;
+  event: string;
+  affectedTickers: string[];
+  marketReaction: string;
+  nextDayMove: string;
+  weekMove: string;
+  keyLearning: string;
+}
+
 export interface ImpactAnalysis {
   impactScore: number;
   affectedTickers: string[];
@@ -58,6 +76,8 @@ export interface ImpactAnalysis {
     urgency: "immediate" | "near-term" | "monitor";
   }[];
   overallPortfolioImpactPct: number;
+  thesisImpact?: ThesisImpact[];
+  precedentEvents?: PrecedentEvent[];
 }
 
 export const holdings: Holding[] = [
