@@ -7,6 +7,9 @@ import { Shield, TrendingDown, TrendingUp, Minus, AlertTriangle, ArrowLeft } fro
 import { motion } from "framer-motion";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { useMemo } from "react";
+import ThesisImpactSection from "@/components/analysis/ThesisImpactSection";
+import PrecedentEventsSection from "@/components/analysis/PrecedentEventsSection";
+import QuantAnalystChat from "@/components/analysis/QuantAnalystChat";
 
 const AnalysisDetail = () => {
   const location = useLocation();
@@ -16,30 +19,21 @@ const AnalysisDetail = () => {
     selectedNews: NewsItem | null;
   };
 
-  // Compute portfolio-weighted risk factor averages for affected tickers
   const radarData = useMemo(() => {
     if (!analysis) return [];
     const affectedTickers = analysis.portfolioImpact?.map((p) => p.ticker) || [];
     const affectedHoldings = allHoldings.filter((h) => affectedTickers.includes(h.ticker));
     const totalWeight = affectedHoldings.reduce((s, h) => s + h.positionSize, 0);
-
     if (affectedHoldings.length === 0 || totalWeight === 0) return [];
-
     const keys = Object.keys(RISK_FACTOR_LABELS) as (keyof RiskFactors)[];
     return keys.map((key) => {
       const weightedAvg = affectedHoldings.reduce(
-        (sum, h) => sum + (h.risk_factors[key] * h.positionSize) / totalWeight,
-        0
+        (sum, h) => sum + (h.risk_factors[key] * h.positionSize) / totalWeight, 0
       );
-      return {
-        factor: RISK_FACTOR_LABELS[key],
-        value: Math.round(weightedAvg * 10) / 10,
-        fullMark: 10,
-      };
+      return { factor: RISK_FACTOR_LABELS[key], value: Math.round(weightedAvg * 10) / 10, fullMark: 10 };
     });
   }, [analysis]);
 
-  // Per-ticker risk factors for the table
   const perTickerRisk = useMemo(() => {
     if (!analysis) return [];
     const affectedTickers = analysis.portfolioImpact?.map((p) => p.ticker) || [];
@@ -123,9 +117,11 @@ const AnalysisDetail = () => {
           </div>
         </div>
 
+        {/* Investment Thesis Impact */}
+        {analysis.thesisImpact && <ThesisImpactSection thesisImpact={analysis.thesisImpact} />}
+
         {/* Radar Chart + Position Impact */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Radar Chart */}
           <div className="glass-card rounded-xl p-6">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
               Risk Factor Exposure (Affected Positions, Weighted Avg)
@@ -134,33 +130,10 @@ const AnalysisDetail = () => {
               <ResponsiveContainer width="100%" height={340}>
                 <RadarChart cx="50%" cy="50%" outerRadius="72%" data={radarData}>
                   <PolarGrid stroke="hsl(var(--border))" strokeOpacity={0.4} />
-                  <PolarAngleAxis
-                    dataKey="factor"
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-                  />
-                  <PolarRadiusAxis
-                    angle={90}
-                    domain={[0, 10]}
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
-                    tickCount={6}
-                  />
-                  <Radar
-                    name="Exposure"
-                    dataKey="value"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
-                    fillOpacity={0.25}
-                    strokeWidth={2}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                    }}
-                    formatter={(value: number) => [value.toFixed(1), "Score"]}
-                  />
+                  <PolarAngleAxis dataKey="factor" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} />
+                  <PolarRadiusAxis angle={90} domain={[0, 10]} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} tickCount={6} />
+                  <Radar name="Exposure" dataKey="value" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.25} strokeWidth={2} />
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} formatter={(value: number) => [value.toFixed(1), "Score"]} />
                 </RadarChart>
               </ResponsiveContainer>
             ) : (
@@ -168,7 +141,6 @@ const AnalysisDetail = () => {
             )}
           </div>
 
-          {/* Position Impact */}
           <div className="glass-card rounded-xl p-6">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Position Impact</h3>
             <div className="space-y-2">
@@ -191,6 +163,9 @@ const AnalysisDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* Historical Precedent Events */}
+        {analysis.precedentEvents && <PrecedentEventsSection precedentEvents={analysis.precedentEvents} />}
 
         {/* Per-ticker risk factor heatmap table */}
         <div className="glass-card rounded-xl p-6 overflow-x-auto">
@@ -227,13 +202,11 @@ const AnalysisDetail = () => {
 
         {/* Risk + Hedge */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Risk Analysis */}
           <div className="glass-card rounded-xl p-6">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Risk Concentration</h3>
             <p className="text-sm text-foreground/80 leading-relaxed">{analysis.riskAnalysis}</p>
           </div>
 
-          {/* Hedge Recommendations */}
           <div className="glass-card rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <Shield className="w-5 h-5 text-primary" />
@@ -255,6 +228,9 @@ const AnalysisDetail = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Floating AI Quant Analyst Chat */}
+      <QuantAnalystChat analysis={analysis} selectedNews={selectedNews} />
     </div>
   );
 };

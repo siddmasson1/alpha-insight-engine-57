@@ -23,6 +23,14 @@ serve(async (req: Request) => {
     let systemPrompt = "";
     let userPrompt = "";
 
+    const thesisAndPrecedentSchema = `
+  "thesisImpact": [
+    {"ticker": "<string>", "originalThesis": "<the holding's original investment thesis>", "thesisStatus": "intact" | "weakened" | "strengthened" | "broken", "reasoning": "<why the thesis is affected or not>", "revisedOutlook": "<what changes going forward>"}
+  ],
+  "precedentEvents": [
+    {"date": "<YYYY-MM-DD>", "event": "<description of historical similar event>", "affectedTickers": ["<tickers>"], "marketReaction": "<how market reacted>", "nextDayMove": "<+X.X% or -X.X%>", "weekMove": "<+X.X% or -X.X%>", "keyLearning": "<what investors should learn>"}
+  ]`;
+
     if (type === "news_impact") {
       const { headline, portfolio } = payload;
       systemPrompt = `You are a senior hedge fund risk analyst. Analyze news events and their impact on a portfolio. Return a JSON response with this exact structure:
@@ -37,9 +45,12 @@ serve(async (req: Request) => {
   "hedgeRecommendations": [
     {"action": "<specific trade recommendation>", "rationale": "<why this hedge works>", "urgency": "immediate" | "near-term" | "monitor"}
   ],
-  "overallPortfolioImpactPct": <estimated portfolio-level P&L impact as percentage>
+  "overallPortfolioImpactPct": <estimated portfolio-level P&L impact as percentage>,
+  ${thesisAndPrecedentSchema}
 }
-Be specific with numbers. Use realistic estimates. Only include tickers from the provided portfolio.`;
+Be specific with numbers. Use realistic estimates. Only include tickers from the provided portfolio.
+For thesisImpact, use the "thesis" field from each holding to assess if the thesis changes.
+For precedentEvents, recall 3-5 similar historical events and their actual market impact.`;
       userPrompt = `NEWS EVENT: "${headline}"\n\nCURRENT PORTFOLIO:\n${JSON.stringify(portfolio, null, 2)}\n\nAnalyze the impact of this news on the portfolio. Return valid JSON only.`;
     } else if (type === "scenario") {
       const { description, affectedSectors, severity, portfolio } = payload;
@@ -55,9 +66,12 @@ Be specific with numbers. Use realistic estimates. Only include tickers from the
   "hedgeRecommendations": [
     {"action": "<specific trade recommendation>", "rationale": "<why this hedge works>", "urgency": "immediate" | "near-term" | "monitor"}
   ],
-  "overallPortfolioImpactPct": <estimated portfolio-level P&L impact as percentage>
+  "overallPortfolioImpactPct": <estimated portfolio-level P&L impact as percentage>,
+  ${thesisAndPrecedentSchema}
 }
-Be specific. Use realistic estimates based on the severity level provided.`;
+Be specific. Use realistic estimates based on the severity level provided.
+For thesisImpact, use the "thesis" field from each holding to assess if the thesis changes.
+For precedentEvents, recall 3-5 similar historical events and their actual market impact.`;
       userPrompt = `SCENARIO: "${description}"\nAFFECTED SECTORS: ${affectedSectors?.join(", ") || "All"}\nSEVERITY: ${severity}/10\n\nCURRENT PORTFOLIO:\n${JSON.stringify(portfolio, null, 2)}\n\nAnalyze the impact. Return valid JSON only.`;
     } else {
       return new Response(JSON.stringify({ error: "Invalid type" }), {
