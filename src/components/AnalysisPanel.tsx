@@ -2,7 +2,9 @@ import { ImpactAnalysis, NewsItem } from "@/data/mockPortfolio";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Shield, TrendingDown, TrendingUp, Minus, AlertTriangle, Target, Loader2 } from "lucide-react";
+import { Shield, TrendingDown, TrendingUp, Minus, AlertTriangle, Target, Loader2, Maximize2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AnalysisPanelProps {
@@ -12,6 +14,11 @@ interface AnalysisPanelProps {
 }
 
 const AnalysisPanel = ({ selectedNews, analysis, isLoading }: AnalysisPanelProps) => {
+  const navigate = useNavigate();
+
+  const handleDrillDown = () => {
+    navigate("/analysis", { state: { analysis, selectedNews } });
+  };
   if (!selectedNews && !isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center px-6">
@@ -64,9 +71,14 @@ const AnalysisPanel = ({ selectedNews, analysis, isLoading }: AnalysisPanelProps
           <div className="space-y-4 pb-4">
             {/* Header */}
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="w-4 h-4 text-warning" />
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Impact Analysis</h3>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-warning" />
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Impact Analysis</h3>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleDrillDown} className="text-xs gap-1.5 text-primary hover:text-primary">
+                  <Maximize2 className="w-3.5 h-3.5" /> Expand
+                </Button>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{analysis.summary}</p>
               <div className="flex items-center gap-3 mt-3">
