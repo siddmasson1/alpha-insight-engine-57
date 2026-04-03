@@ -181,6 +181,9 @@ const UploadPositionsDialog = ({ open, onOpenChange, onUpload }: UploadPositions
       <DialogContent className="sm:max-w-lg bg-card border-border/50">
         <DialogHeader>
           <DialogTitle className="text-foreground">Upload Positions</DialogTitle>
+          <DialogDescription className="text-muted-foreground text-sm">
+            Upload a CSV file with stock prices to update your holdings and send to webhook.
+          </DialogDescription>
         </DialogHeader>
 
         {!file ? (
