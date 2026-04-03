@@ -27,7 +27,7 @@ const ThesisImpactSection = ({ thesisImpact }: ThesisImpactSectionProps) => {
       </div>
       <div className="space-y-4">
         {thesisImpact.map((t) => {
-          const config = statusConfig[t.thesisStatus];
+          const config = statusConfig[t.thesisStatus as keyof typeof statusConfig] ?? statusConfig.intact;
           const Icon = config.icon;
           return (
             <div key={t.ticker} className="p-4 rounded-lg bg-secondary/50 border border-border/30">
