@@ -1,0 +1,146 @@
+import { ImpactAnalysis, NewsItem } from "@/data/mockPortfolio";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Shield, TrendingDown, TrendingUp, Minus, AlertTriangle, Target, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface AnalysisPanelProps {
+  selectedNews: NewsItem | null;
+  analysis: ImpactAnalysis | null;
+  isLoading: boolean;
+}
+
+const AnalysisPanel = ({ selectedNews, analysis, isLoading }: AnalysisPanelProps) => {
+  if (!selectedNews && !isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center px-6">
+        <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-4">
+          <Target className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">Select a News Event</h3>
+        <p className="text-sm text-muted-foreground max-w-[280px]">
+          Click on any news item or create a custom scenario to see AI-powered impact analysis and hedge recommendations.
+        </p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center px-6">
+        <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+        <h3 className="text-lg font-semibold text-foreground mb-2">Analyzing Impact...</h3>
+        <p className="text-sm text-muted-foreground">AI is evaluating portfolio exposure and generating hedge recommendations.</p>
+      </div>
+    );
+  }
+
+  if (!analysis) return null;
+
+  const directionIcon = (dir: string) => {
+    if (dir === "up") return <TrendingUp className="w-3.5 h-3.5 text-gain" />;
+    if (dir === "down") return <TrendingDown className="w-3.5 h-3.5 text-loss" />;
+    return <Minus className="w-3.5 h-3.5 text-muted-foreground" />;
+  };
+
+  const urgencyColor = (u: string) => {
+    if (u === "immediate") return "bg-loss/20 text-loss border-loss/30";
+    if (u === "near-term") return "bg-warning/20 text-warning border-warning/30";
+    return "bg-primary/20 text-primary border-primary/30";
+  };
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={selectedNews?.id}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.3 }}
+        className="h-full"
+      >
+        <ScrollArea className="h-full pr-2">
+          <div className="space-y-4 pb-4">
+            {/* Header */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle className="w-4 h-4 text-warning" />
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Impact Analysis</h3>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">{analysis.summary}</p>
+              <div className="flex items-center gap-3 mt-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-muted-foreground">Impact:</span>
+                  <span className={cn("font-mono font-bold text-sm",
+                    analysis.impactScore >= 8 ? "text-loss" : analysis.impactScore >= 6 ? "text-warning" : "text-primary"
+                  )}>{analysis.impactScore}/10</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-muted-foreground">Portfolio:</span>
+                  <span className={cn("font-mono font-bold text-sm",
+                    analysis.overallPortfolioImpactPct >= 0 ? "text-gain" : "text-loss"
+                  )}>
+                    {analysis.overallPortfolioImpactPct >= 0 ? "+" : ""}{analysis.overallPortfolioImpactPct?.toFixed(2)}%
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Position Impact */}
+            <div className="glass-card rounded-lg p-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Position Impact</h4>
+              <div className="space-y-1.5">
+                {analysis.portfolioImpact?.map((p) => (
+                  <div key={p.ticker} className="flex items-center justify-between py-1.5 border-b border-border/20 last:border-0">
+                    <div className="flex items-center gap-2">
+                      {directionIcon(p.direction)}
+                      <span className="font-mono text-sm font-semibold text-primary">{p.ticker}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-muted-foreground max-w-[180px] truncate">{p.reasoning}</span>
+                      <span className={cn("font-mono text-sm font-bold min-w-[55px] text-right",
+                        p.direction === "up" ? "text-gain" : p.direction === "down" ? "text-loss" : "text-muted-foreground"
+                      )}>
+                        {p.direction === "up" ? "+" : p.direction === "down" ? "-" : ""}{Math.abs(p.estimatedPctMove).toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Risk Analysis */}
+            <div className="glass-card rounded-lg p-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Risk Concentration</h4>
+              <p className="text-sm text-foreground/80 leading-relaxed">{analysis.riskAnalysis}</p>
+            </div>
+
+            {/* Hedge Recommendations */}
+            <div className="glass-card rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-4 h-4 text-primary" />
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Hedge Recommendations</h4>
+              </div>
+              <div className="space-y-2">
+                {analysis.hedgeRecommendations?.map((rec, i) => (
+                  <div key={i} className="p-2.5 rounded-md bg-secondary/50 border border-border/30">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <p className="text-sm font-medium text-foreground">{rec.action}</p>
+                      <Badge variant="outline" className={cn("text-[10px] shrink-0", urgencyColor(rec.urgency))}>
+                        {rec.urgency}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{rec.rationale}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+export default AnalysisPanel;
