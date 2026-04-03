@@ -62,6 +62,29 @@ const HeaderStats = ({ totalAUM, dailyPnL, portfolioBeta }: HeaderStatsProps) =>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Portfolio β</p>
           <p className="text-sm font-mono font-bold text-foreground">{portfolioBeta.toFixed(2)}</p>
         </div>
+
+        <div className="w-px h-8 bg-border/50" />
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">JD</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <div className="px-2 py-1.5">
+              <p className="text-sm font-medium">John Doe</p>
+              <p className="text-xs text-muted-foreground">john@example.com</p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-loss">Sign out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
