@@ -1,13 +1,16 @@
 import { Holding } from "@/data/mockPortfolio";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Minus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 
 interface PortfolioTableProps {
   holdings: Holding[];
+  onRemoveHolding?: (ticker: string) => void;
 }
 
-const PortfolioTable = ({ holdings }: PortfolioTableProps) => {
+const PortfolioTable = ({ holdings, onRemoveHolding }: PortfolioTableProps) => {
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
 
@@ -27,11 +30,13 @@ const PortfolioTable = ({ holdings }: PortfolioTableProps) => {
             <TableHead className="text-muted-foreground text-xs font-semibold uppercase tracking-wider text-right">Position</TableHead>
             <TableHead className="text-muted-foreground text-xs font-semibold uppercase tracking-wider text-right">Wt %</TableHead>
             <TableHead className="text-muted-foreground text-xs font-semibold uppercase tracking-wider text-right">P&L</TableHead>
+            <TableHead className="text-muted-foreground text-xs font-semibold uppercase tracking-wider text-center">Added</TableHead>
+            <TableHead className="text-muted-foreground text-xs font-semibold uppercase tracking-wider w-[40px]"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {holdings.map((h) => (
-            <TableRow key={h.ticker} className="border-border/30 hover:bg-secondary/50 transition-colors">
+            <TableRow key={h.ticker} className="border-border/30 hover:bg-secondary/50 transition-colors group">
               <TableCell className="font-mono font-semibold text-primary text-sm py-2">{h.ticker}</TableCell>
               <TableCell className="text-foreground text-sm py-2 truncate max-w-[140px]">{h.name}</TableCell>
               <TableCell className="text-muted-foreground text-xs py-2">{h.sector}</TableCell>
@@ -55,6 +60,21 @@ const PortfolioTable = ({ holdings }: PortfolioTableProps) => {
               </TableCell>
               <TableCell className={cn("text-right font-mono text-sm font-medium py-2", h.pnl >= 0 ? "text-gain" : "text-loss")}>
                 {h.pnl >= 0 ? "+" : ""}{formatCurrency(h.pnl)}
+              </TableCell>
+              <TableCell className="text-center text-xs text-muted-foreground font-mono py-2">
+                {format(h.dateAdded, "MM/dd/yy")}
+              </TableCell>
+              <TableCell className="py-2">
+                {onRemoveHolding && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-loss"
+                    onClick={() => onRemoveHolding(h.ticker)}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                )}
               </TableCell>
             </TableRow>
           ))}
