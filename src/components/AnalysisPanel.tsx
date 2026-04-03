@@ -14,6 +14,11 @@ interface AnalysisPanelProps {
 }
 
 const AnalysisPanel = ({ selectedNews, analysis, isLoading }: AnalysisPanelProps) => {
+  const navigate = useNavigate();
+
+  const handleDrillDown = () => {
+    navigate("/analysis", { state: { analysis, selectedNews } });
+  };
   if (!selectedNews && !isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center px-6">
