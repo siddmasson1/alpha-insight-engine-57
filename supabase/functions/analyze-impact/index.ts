@@ -1,3 +1,5 @@
+// Edge function: analyze-impact
+// Analyzes portfolio impact from news events and scenarios using Lovable AI
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -6,13 +8,17 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
 
   try {
     const { type, payload } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
+    }
 
     let systemPrompt = "";
     let userPrompt = "";
@@ -34,12 +40,7 @@ serve(async (req) => {
   "overallPortfolioImpactPct": <estimated portfolio-level P&L impact as percentage>
 }
 Be specific with numbers. Use realistic estimates. Only include tickers from the provided portfolio.`;
-      userPrompt = `NEWS EVENT: "${headline}"
-
-CURRENT PORTFOLIO:
-${JSON.stringify(portfolio, null, 2)}
-
-Analyze the impact of this news on the portfolio. Return valid JSON only.`;
+      userPrompt = `NEWS EVENT: "${headline}"\n\nCURRENT PORTFOLIO:\n${JSON.stringify(portfolio, null, 2)}\n\nAnalyze the impact of this news on the portfolio. Return valid JSON only.`;
     } else if (type === "scenario") {
       const { description, affectedSectors, severity, portfolio } = payload;
       systemPrompt = `You are a senior hedge fund risk analyst specializing in scenario analysis. Given a hypothetical scenario, analyze its impact on the portfolio. Return a JSON response with this exact structure:
@@ -57,14 +58,7 @@ Analyze the impact of this news on the portfolio. Return valid JSON only.`;
   "overallPortfolioImpactPct": <estimated portfolio-level P&L impact as percentage>
 }
 Be specific. Use realistic estimates based on the severity level provided.`;
-      userPrompt = `SCENARIO: "${description}"
-AFFECTED SECTORS: ${affectedSectors?.join(", ") || "All"}
-SEVERITY: ${severity}/10
-
-CURRENT PORTFOLIO:
-${JSON.stringify(portfolio, null, 2)}
-
-Analyze the impact. Return valid JSON only.`;
+      userPrompt = `SCENARIO: "${description}"\nAFFECTED SECTORS: ${affectedSectors?.join(", ") || "All"}\nSEVERITY: ${severity}/10\n\nCURRENT PORTFOLIO:\n${JSON.stringify(portfolio, null, 2)}\n\nAnalyze the impact. Return valid JSON only.`;
     } else {
       return new Response(JSON.stringify({ error: "Invalid type" }), {
         status: 400,
@@ -88,20 +82,21 @@ Analyze the impact. Return valid JSON only.`;
     });
 
     if (!response.ok) {
-      if (response.status === 429) {
+      const statusCode = response.status;
+      if (statusCode === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again shortly." }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Please add funds in Settings → Workspace → Usage." }), {
+      if (statusCode === 402) {
+        return new Response(JSON.stringify({ error: "AI credits exhausted. Please add funds in Settings > Workspace > Usage." }), {
           status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
+      console.error("AI gateway error:", statusCode, t);
       return new Response(JSON.stringify({ error: "AI analysis failed" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -111,7 +106,6 @@ Analyze the impact. Return valid JSON only.`;
     const aiData = await response.json();
     const content = aiData.choices?.[0]?.message?.content || "";
 
-    // Parse JSON from the response (handle markdown code blocks)
     let parsed;
     try {
       const jsonMatch = content.match(/```json\s*([\s\S]*?)```/) || content.match(/```\s*([\s\S]*?)```/);
@@ -126,7 +120,8 @@ Analyze the impact. Return valid JSON only.`;
     });
   } catch (e) {
     console.error("analyze-impact error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+    const errorMessage = e instanceof Error ? e.message : "Unknown error";
+    return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
