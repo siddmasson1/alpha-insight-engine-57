@@ -1,9 +1,10 @@
 import { useState, useCallback, useRef } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Upload, FileUp, X, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Holding } from "@/data/mockPortfolio";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 interface UploadPositionsDialogProps {
@@ -141,16 +142,12 @@ const UploadPositionsDialog = ({ open, onOpenChange, onUpload }: UploadPositions
         shares: h.shares, weight: h.weight, pnl: h.pnl,
       }));
 
-      const res = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const { data, error } = await supabase.functions.invoke("send-to-webhook", {
+        body: { payload, webhookUrl: WEBHOOK_URL },
       });
 
-      if (!res.ok) {
-        const body = await res.text();
-        throw new Error(body || `HTTP ${res.status}`);
-      }
+      if (error) throw error;
+      if (data && !data.success) throw new Error(data.body || data.error || "Webhook failed");
 
       onUpload(preview);
       toast({ title: "Positions Uploaded", description: `${preview.length} holdings uploaded and sent to webhook.` });
@@ -184,6 +181,9 @@ const UploadPositionsDialog = ({ open, onOpenChange, onUpload }: UploadPositions
       <DialogContent className="sm:max-w-lg bg-card border-border/50">
         <DialogHeader>
           <DialogTitle className="text-foreground">Upload Positions</DialogTitle>
+          <DialogDescription className="text-muted-foreground text-sm">
+            Upload a CSV file with stock prices to update your holdings and send to webhook.
+          </DialogDescription>
         </DialogHeader>
 
         {!file ? (
