@@ -77,6 +77,7 @@ export const initialNews: NewsItem[] = [
     source: "Reuters",
     affectedTickers: ["JPM", "BAC", "GS", "V"],
     impactScore: 7,
+    url: "https://www.reuters.com/markets/us/",
   },
   {
     id: "2",
@@ -85,6 +86,7 @@ export const initialNews: NewsItem[] = [
     source: "Bloomberg",
     affectedTickers: ["NVDA", "MSFT", "GOOGL"],
     impactScore: 8,
+    url: "https://www.bloomberg.com/technology",
   },
   {
     id: "3",
@@ -93,6 +95,7 @@ export const initialNews: NewsItem[] = [
     source: "CNBC",
     affectedTickers: ["XOM", "CVX"],
     impactScore: 6,
+    url: "https://www.cnbc.com/energy/",
   },
   {
     id: "4",
@@ -101,6 +104,7 @@ export const initialNews: NewsItem[] = [
     source: "WSJ",
     affectedTickers: ["LLY", "JNJ", "UNH", "ABBV"],
     impactScore: 9,
+    url: "https://www.wsj.com/health",
   },
   {
     id: "5",
@@ -109,6 +113,7 @@ export const initialNews: NewsItem[] = [
     source: "TechCrunch",
     affectedTickers: ["AMZN", "COST", "HD"],
     impactScore: 4,
+    url: "https://techcrunch.com/",
   },
   {
     id: "6",
@@ -117,6 +122,7 @@ export const initialNews: NewsItem[] = [
     source: "Financial Times",
     affectedTickers: ["CRM", "MSFT", "GOOGL"],
     impactScore: 5,
+    url: "https://www.ft.com/",
   },
 ];
 
