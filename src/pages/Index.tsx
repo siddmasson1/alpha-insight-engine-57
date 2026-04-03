@@ -7,9 +7,10 @@ import NewsFeed from "@/components/NewsFeed";
 import AnalysisPanel from "@/components/AnalysisPanel";
 import ScenarioDialog from "@/components/ScenarioDialog";
 import AddHoldingDialog from "@/components/AddHoldingDialog";
+import UploadPositionsDialog from "@/components/UploadPositionsDialog";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 
 const Index = () => {
   const [holdings, setHoldings] = useState<Holding[]>(initialHoldings);
@@ -19,6 +20,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const [addHoldingOpen, setAddHoldingOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   const selectedNews = news.find((n) => n.id === selectedNewsId) || null;
 
@@ -41,6 +43,10 @@ const Index = () => {
       return updated.map((h) => ({ ...h, weight: (h.positionSize / totalPos) * 100 }));
     });
     toast({ title: "Position Added", description: `${newHolding.ticker} added to portfolio.` });
+  }, []);
+
+  const handleUploadPositions = useCallback((newHoldings: Holding[]) => {
+    setHoldings(newHoldings);
   }, []);
 
   const handleRemoveHolding = useCallback((ticker: string) => {
@@ -136,15 +142,26 @@ const Index = () => {
           <div className="p-4 border-b border-border/30">
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Holdings ({holdings.length})</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setAddHoldingOpen(true)}
-                className="text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
-              >
-                <Plus className="w-3 h-3" />
-                Add Position
-              </Button>
+              <div className="flex gap-1.5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setUploadOpen(true)}
+                  className="text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
+                >
+                  <Upload className="w-3 h-3" />
+                  Upload CSV
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAddHoldingOpen(true)}
+                  className="text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
+                >
+                  <Plus className="w-3 h-3" />
+                  Add Position
+                </Button>
+              </div>
             </div>
             <PortfolioTable holdings={holdings} onRemoveHolding={handleRemoveHolding} />
           </div>
@@ -173,6 +190,7 @@ const Index = () => {
 
       <ScenarioDialog open={scenarioOpen} onOpenChange={setScenarioOpen} onSubmit={handleScenarioSubmit} />
       <AddHoldingDialog open={addHoldingOpen} onOpenChange={setAddHoldingOpen} onSubmit={handleAddHolding} />
+      <UploadPositionsDialog open={uploadOpen} onOpenChange={setUploadOpen} onUpload={handleUploadPositions} />
     </div>
   );
 };
