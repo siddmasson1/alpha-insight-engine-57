@@ -45,6 +45,10 @@ const Index = () => {
     toast({ title: "Position Added", description: `${newHolding.ticker} added to portfolio.` });
   }, []);
 
+  const handleUploadPositions = useCallback((newHoldings: Holding[]) => {
+    setHoldings(newHoldings);
+  }, []);
+
   const handleRemoveHolding = useCallback((ticker: string) => {
     setHoldings((prev) => {
       const updated = prev.filter((h) => h.ticker !== ticker);
