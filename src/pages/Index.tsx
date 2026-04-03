@@ -142,15 +142,26 @@ const Index = () => {
           <div className="p-4 border-b border-border/30">
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Holdings ({holdings.length})</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setAddHoldingOpen(true)}
-                className="text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
-              >
-                <Plus className="w-3 h-3" />
-                Add Position
-              </Button>
+              <div className="flex gap-1.5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setUploadOpen(true)}
+                  className="text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
+                >
+                  <Upload className="w-3 h-3" />
+                  Upload CSV
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAddHoldingOpen(true)}
+                  className="text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
+                >
+                  <Plus className="w-3 h-3" />
+                  Add Position
+                </Button>
+              </div>
             </div>
             <PortfolioTable holdings={holdings} onRemoveHolding={handleRemoveHolding} />
           </div>
