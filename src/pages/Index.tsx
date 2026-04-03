@@ -20,6 +20,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const [addHoldingOpen, setAddHoldingOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   const selectedNews = news.find((n) => n.id === selectedNewsId) || null;
 
