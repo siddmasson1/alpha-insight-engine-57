@@ -1,6 +1,6 @@
 import { NewsItem } from "@/data/mockPortfolio";
 import { cn } from "@/lib/utils";
-import { Clock, Zap, Plus, ExternalLink, X } from "lucide-react";
+import { Clock, Zap, Plus, ExternalLink, X, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
